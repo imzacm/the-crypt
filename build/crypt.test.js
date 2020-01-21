@@ -4,6 +4,8 @@ var _path = require("path");
 
 var _fs = require("fs");
 
+var _crypto = require("crypto");
+
 var _crypt = require("./crypt");
 
 const files = {
@@ -33,5 +35,20 @@ describe('Crypt', () => {
     await crypt.remove('test');
     const removedValue = await crypt.get('test');
     expect(removedValue).toBeUndefined();
+  });
+  it('correctly lists all names', async () => {
+    const crypt = (0, _crypt.getCrypt)(files);
+    const names = [];
+
+    for (let i = 0; i < 100; ++i) {
+      names.push((0, _crypto.randomBytes)(12).toString('hex'));
+    }
+
+    for (const name of names) {
+      await crypt.set(name, 'abc');
+    }
+
+    const foundNames = await crypt.names();
+    expect(foundNames).toEqual(names);
   });
 });

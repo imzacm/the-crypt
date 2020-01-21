@@ -31,12 +31,17 @@ const run = async () => {
   })
 
   while (true) {
-    const action = await ask('Action (get(name), set(name, value), remove(name), exit()): ')
+    const action = await ask('Action (get(name), set(name, value), remove(name), names(), exit()): ')
     const actionWord = action.split(' ').join('').split('(')[0]
     const actionParams = action.substring(action.indexOf('(') + 1, action.indexOf(')')).split(',').map(a => a.trim())
 
     if (actionWord === 'exit') {
       break
+    }
+
+    if (actionWord === 'names') {
+      const names = await crypt.names()
+      console.log(names.join(', '))
     }
 
     if (actionWord === 'get') {

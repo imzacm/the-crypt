@@ -14,7 +14,15 @@ The cli takes no arguments and after requesting the paths for the three files ab
 
 ### Usage
 ```bash
-npx the-crypt
+npx crypt-cli
+```
+
+## GUI
+The GUI allows you to manage your crypt as easily as filling in an online form.
+
+### Usage
+```bash
+npx crypt-ui
 ```
 
 ## JavaScript API
@@ -31,3 +39,6 @@ This function encrypts the value and writes the key, iv, and encrypted data to t
 
 #### remove(name: string): undefined
 This function removes the key, iv and encrypted data associated with ```name```.
+
+#### names(): string[]
+This function returns a list of names stored in the crypt.

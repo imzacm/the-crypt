@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>The Crypt</title>
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<div id="findCrypt" class="container">
+  <div class="row">
+    <h1 class="col">Find Crypt</h1>
+  </div>
+</div>
+<div id="useCrypt" class="container" style="display: none;">
+  <div class="mb-3" style="overflow-y: auto;">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Remove</th>
+      </tr>
+      </thead>
+      <tbody id="cryptBody"></tbody>
+    </table>
+  </div>
+  <div class="row mb-3">
+    <div class="col input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Name</span>
+      </div>
+      <input type="text" class="form-control" id="newName">
+    </div>
+    <div class="col input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Value</span>
+      </div>
+      <input type="text" class="form-control" id="newValue">
+    </div>
+  </div>
+  <button class="btn btn-primary" id="addValue">Add value</button>
+</div>
+
+<script>
+  const { getCrypt } = require('../build')
+
+  const files = {
+    keyFile: null,
+    ivFile: null,
+    cryptFile: null
+  }
+
+  let crypt
+
+  const updateCryptList = async () => {
+    const cryptBody = document.getElementById('cryptBody')
+    Array.from(cryptBody.children).forEach(child => child.remove())
+
+    const names = await crypt.names()
+    await Promise.all(
+      names.map(async name => {
+        const row = document.createElement('tr')
+        row.innerHTML = `<td>${ name }</td>
+<td contenteditable="true" id="value-${ name }">${ await crypt.get(name) }</td>
+<td><a href="#" id="remove-${ name }">Remove</a></td>
+`
+        cryptBody.appendChild(row)
+
+        const valueBox = cryptBody.querySelector(`#value-${ name }`)
+
+        let valueChanged = false
+        valueBox.addEventListener('input', () => valueChanged = true)
+        valueBox.addEventListener('focusout', () => {
+          if (valueChanged) {
+            crypt.set(name, valueBox.innerText)
+          }
+        })
+
+        cryptBody.querySelector(`#remove-${ name }`).addEventListener('click', () => {
+          crypt.remove(name).then(() => updateCryptList())
+        })
+      })
+    )
+  }
+
+  const displayKey = key => `${ key.charAt(0).toUpperCase() }${ key.substring(1, key.indexOf('File')) }`
+
+  const findCrypt = document.getElementById('findCrypt')
+
+  Object.keys(files).forEach(key => {
+    const rowItem = document.createElement('div')
+    rowItem.classList.add('row')
+    rowItem.innerHTML = `<div class="col input-group mb-3">
+<div class="input-group-prepend">
+  <span class="input-group-text">${ displayKey(key) } File</span>
+</div>
+<div class="custom-file">
+  <input type="file" class="custom-file-input" id="${ key }">
+  <label class="custom-file-label" for="${ key }"></label>
+</div>
+</div>`
+    findCrypt.appendChild(rowItem)
+    const input = rowItem.querySelector(`#${ key }`)
+    input.addEventListener('change', () => {
+      files[key] = input.files[0].path
+      rowItem.querySelector('label').innerText = input.files[0].path
+    })
+  })
+  const submit = document.createElement('button')
+  submit.innerText = 'Open crypt'
+  submit.classList.add('btn', 'btn-primary')
+  findCrypt.appendChild(submit)
+
+  submit.addEventListener('click', () => {
+    crypt = getCrypt(files)
+    findCrypt.style.display = 'none'
+
+    updateCryptList().catch(console.error)
+
+    document.getElementById('addValue').addEventListener('click', () => {
+      const name = document.getElementById('newName')
+      const value = document.getElementById('newValue')
+      crypt.set(name.value, value.value).then(() => {
+        name.value = ''
+        value.value = ''
+        updateCryptList()
+      })
+    })
+
+    document.getElementById('useCrypt').style.display = null
+  })
+</script>
+</body>
+</html>

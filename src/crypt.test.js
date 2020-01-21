@@ -1,5 +1,6 @@
 import { join } from 'path'
-import { unlink, readFile } from 'fs'
+import { unlink } from 'fs'
+import { randomBytes } from 'crypto'
 
 import { getCrypt } from './crypt'
 
@@ -40,5 +41,18 @@ describe('Crypt', () => {
     await crypt.remove('test')
     const removedValue = await crypt.get('test')
     expect(removedValue).toBeUndefined()
+  })
+
+  it('correctly lists all names', async () => {
+    const crypt = getCrypt(files)
+    const names = []
+    for (let i = 0; i < 100; ++i) {
+      names.push(randomBytes(12).toString('hex'))
+    }
+    for (const name of names) {
+      await crypt.set(name, 'abc')
+    }
+    const foundNames = await crypt.names()
+    expect(foundNames).toEqual(names)
   })
 })

@@ -1,22 +1,29 @@
 {
   "name": "the-crypt",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "build/index.js",
-  "bin": "build/cli.js",
+  "bin": {
+    "crypt-cli": "build/cli.js",
+    "crypt-ui": "ui/run.js"
+  },
   "scripts": {
     "test": "jest",
     "build": "babel src -d build && pkg . --out-path bin",
-    "start": "node build/cli.js"
+    "start": "node build/cli.js",
+    "start:ui": "electron ui/main.js"
   },
   "keywords": [],
   "author": "Zac McChesney",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "bootstrap": "4.4.1"
+  },
   "devDependencies": {
     "@babel/cli": "7.8.3",
     "@babel/core": "7.8.3",
     "@babel/preset-env": "7.8.3",
+    "electron": "7.1.9",
     "jest": "24.9.0",
     "pkg": "4.4.2"
   }

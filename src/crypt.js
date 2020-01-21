@@ -108,6 +108,19 @@ export const getCrypt = ({ keyFile, ivFile, cryptFile }) => {
         ivStore: removeExisting(ivStore),
         cryptStore: removeExisting(cryptStore)
       })
+    },
+    async names() {
+      const ivStore = await readFileAsync(ivFile)
+      return ivStore
+        .split(delimiter)
+        .map(str => {
+          const match = str.match(/:;:(.+?):;:/g)
+          if (!match) {
+            return
+          }
+          return match[0].split(seperator)[1]
+        })
+        .filter(name => !!name)
     }
   }
 }
