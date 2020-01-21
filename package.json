@@ -1,12 +1,9 @@
 {
   "name": "the-crypt",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "build/index.js",
-  "bin": {
-    "crypt-cli": "build/cli.js",
-    "crypt-ui": "ui/run.js"
-  },
+  "bin": "build/cli.js",
   "scripts": {
     "test": "jest",
     "build": "babel src -d build && pkg . --out-path bin",

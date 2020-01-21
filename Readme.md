@@ -14,7 +14,7 @@ The cli takes no arguments and after requesting the paths for the three files ab
 
 ### Usage
 ```bash
-npx crypt-cli
+npx the-crypt
 ```
 
 ## GUI
@@ -22,7 +22,7 @@ The GUI allows you to manage your crypt as easily as filling in an online form.
 
 ### Usage
 ```bash
-npx crypt-ui
+npx the-crypt ui
 ```
 
 ## JavaScript API

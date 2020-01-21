@@ -20,6 +20,18 @@ const ask = (question, muted) => new Promise(resolve => {
 })
 
 const run = async () => {
+  if (process.argv[2] === 'ui') {
+    const { spawn } = require('child_process')
+    const { join } = require('path')
+
+    const app = spawn('node', [ require.resolve('electron').replace('index.js', 'cli.js'), 'ui/main.js' ], {
+      stdio: 'inherit',
+      cwd: join(__dirname, '..')
+    })
+    app.on('exit', code => process.exit(code))
+    return
+  }
+
   const keyFile = await ask('Key File: ', true)
   const ivFile = await ask('IV File: ', true)
   const cryptFile = await ask('Crypt File: ', true)
