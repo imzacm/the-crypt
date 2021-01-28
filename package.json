@@ -15,7 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "bootstrap": "4.4.1",
-    "electron": "7.1.9"
+    "electron": "9.4.0"
   },
   "devDependencies": {
     "@babel/cli": "7.8.3",
